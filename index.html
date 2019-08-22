@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script>
+    //请用户输入一条消息
+    let msg = prompt("请输入消息内容")
+    //去消息中查找是否包含“我草”
+    let i=msg.search(/([我卧]|wo)\s*([草艹槽]|cao)/i);
+    //如果找到
+    if(i!=-1){
+        //就在页面显示：包含敏感词，不允许发送！
+        document.write("<h1 style=\"color:red\">包含敏感词，不允许发送！</h1>")
+    }else{//否则，如果没有找到
+        //就在页面显示：然哥说：哈哈哈
+        document.write(`然哥说${msg}`);
+    }
+    
+</script>        
+</body>
+</html>

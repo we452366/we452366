@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>自定义MVVM框架,这是比较牛逼的v-text，v-model和数据绑定原理介绍</title>
+    </head>
+
+    <body>
+        <div id="app">
+            <p v-text="message"></p>
+            <input type="text" v-model="message"/>
+            <p>{{message}}</p>
+        </div>
+<script>
+//创建一个MVVM框架类
+class MVVM { //类构造器（创造实例模板代码）
+    constructor(options) { //相当于函数的参数 {el:...,data:...}
+        //缓存重要属性
+        this.$vm = this;
+        this.$el = options.el;
+        this.$data = options.data;
+
+        //判断视图是否存在
+        if(this.$el) {
+            //添加属性观察对象（实现属性挟持）
+            new Observer(this.$data);
+            //创建模板编译器，来解析视图
+            this.$compiler = new TemepCompiler(this.$el, this.$vm);
+        }
+    }
+}
+class TemepCompiler { //类构造器（创造实例模板代码）
+    constructor(el, vm) { //相当于函数的参数 (this.$el,this.$vm)
+        //缓存重要属性
+        this.vm = vm;
+        this.el = this.isElemetNode(el) ? el : document.querySelector(el);
+        //判断视图是否存在
+        if(this.el) {
+            //1.把模板内容放入内存(片段)
+            var fragment = this.node2fragment(this.el);
+            //2.解析模板
+            this.compile(fragment);
+            //3.把内存的结果返回页面
+            this.el.appendChild(fragment);
+        }
+    }
+    //工具方法
+    isElemetNode(node) {
+        return node.nodeType === 1 //1.元素节点 2.属性节点 3.文本节点
+    }
+    isTextNode(node) {
+        return node.nodeType === 3 //1.元素节点 2.属性节点 3.文本节点
+    }
+    toArray(arr) {
+        return [].slice.call(arr); //假数组转为数组；
+    }
+    isDerective(attrName) {
+        return attrName.indexOf("v-") >= 0; //判断属性名中是否有v-开头的属性
+    }
+    //核心方法(节省内存)把模板放入内存，等待解析
+    node2fragment(node) {
+        //创建内存片段
+        var fragment = document.createDocumentFragment(),
+            child;
+        //模板内容丢到内存
+        while(child = node.firstChild) {
+            fragment.appendChild(child);
+        }
+        //返回
+        return fragment;
+    }
+    compile(parentNode) {
+        //获取子节点
+        var childNodes = parentNode.childNodes, //类数组
+            compiler = this;
+        //遍历每一个节点
+        this.toArray(childNodes).forEach((node) => {
+            //判断节点类型
+            if(compiler.isElemetNode(node)) {
+                //1.属性节点（解析指令）
+                compiler.compileElement(node);
+
+            } else {
+                //2.文本节点（解析指令）
+                var textReg = /\{\{(.+)\}\}/; //（\转义）文本表达式验证规则
+                var expr = node.textContent;
+                //var expr = node.innerText; //谷歌支持
+                //按照规则验证内容
+                if(textReg.test(expr)) {
+                    expr = RegExp.$1 //缓存最近一次的正则里面的值;
+                    //调用方法编译
+                    compiler.compileText(node, expr); //如果还有子节点，继续解析；
+                }
+            }
+        });
+    }
+    //解析元素节点的指令的方法
+    compileElement(node) {
+        //获取当前元素节点的所有属性
+        var arrs = node.attributes;
+        self = this;
+        //遍历当前元素所有属性
+        this.toArray(arrs).forEach(attr => {
+            var attrName = attr.name;
+            //判断属性是否是指令
+            if(self.isDerective(attrName)) {
+                var type = attrName.substr(2); //v-text,v-model...
+                var expr = attr.value; //指令的值就是表达式
+                //找帮手
+                CompilerUntils[type](node, self.vm, expr);
+            }
+        })
+    }
+    //解析表达式的方法
+    compileText(node, expr) {
+        CompilerUntils.text(node, this.vm, expr);
+    }
+
+}
+
+//解析指令帮手
+CompilerUntils = {
+    //解析text指令
+    text(node, vm, expr) {
+        //第一次观察
+        //1.找到更新规则对象的更新方法
+        var updaterFn = this.updater["textUpdater"];
+        //2.执行方法
+        updaterFn && updaterFn(node, vm.$data[expr]) //等价if(updaterFn){updaterFn(node,vm.$data[expr])}
+
+        //第n+1次观察
+        new Watcher(vm, expr, (newVaule) => {
+            //触发订阅时按之前的规则对节点进行更新;v-model的也一样；
+            updaterFn && updaterFn(node, newVaule);
+        })
+    },
+    //解析model指令
+    model(node, vm, expr) {
+        //1.找到更新规则对象的更新方法
+        var updaterFn = this.updater["modelUpdater"];
+        //2.执行方法
+        updaterFn && updaterFn(node, vm.$data[expr]) //等价if(updaterFn){updaterFn(node,vm.$data[expr])}
+
+        //第n+1次观察
+        new Watcher(vm, expr, (newVaule) => {
+            //触发订阅时按之前的规则对节点进行更新;v-model的也一样；
+            updaterFn && updaterFn(node, newVaule);
+        })
+        //视图到模型变化
+        node.addEventListener("input", (e) => {
+            var newValue = e.target.value;
+            //把值放进数据
+            console.log(newValue+'新值');
+            vm.$data[expr] = newValue;
+        })
+    },
+    updater: {
+        //文本更新方法
+        textUpdater(node, value) {
+            node.textContent;
+            //node.innerText;  //谷歌支持
+        },
+        //输入框值更新方法
+        modelUpdater(node, value) {
+            node.value = value;
+        }
+    }
+}
+class Observer {
+    //构造函数
+    constructor(data) {
+        //提供一个解析方法，完成属性的分析，和挟持
+        this.observe(data);
+    }
+    observe(data) {
+        //判断数据的有效性 必须是对象
+        if(!data || typeof data !== "object") {
+            return;
+        }
+        var keys = Object.keys(data); //拿到所有的属性（key)转为数组
+        keys.forEach((key) => {
+            //重新定义key
+            this.defineReactive(data, key, data[key]); //动态属性需要中括号不能.
+        })
+
+    }
+    //针对当前对象属性的重新定义（挟持）
+    defineReactive(obj, key, val) {
+        var dep = new Dep();
+        //重新定义 
+        Object.defineProperty(obj, key, {
+            enumerable: true, //是否可以遍历
+            configurable: false, //是否可以重新配置
+            get() { //getter取值
+                Dep.target && dep.addSub(Dep.target); //拿到订阅者
+                //返回属性
+                return val;
+            },
+            set(newValue) { //setter修改值
+                val = newValue; //新值覆盖旧值
+                dep.notify(); //通知，触发update操作；
+            }
+
+        })
+
+    }
+}
+
+//创建发布者
+//1.管理订阅者
+//2.通知
+class Dep {
+    constructor() {
+        this.subs = [];
+    }
+    //添加订阅
+    addSub(sub) { //其实就是Watcher实例
+        this.subs.push(sub);
+    }
+    //集体通知
+    notify() {
+        this.subs.forEach((sub) => {
+            sub.update();
+        })
+    }
+}
+//定义一个订阅者
+class Watcher {
+    //构造函数
+    //1.需要使用订阅功能的节点
+    //2.全局vm对象，用于获取数据
+    //3.需要使用订阅功能的节点
+    constructor(vm, expr, cb) {
+        //缓存重要属性
+        this.vm = vm;
+        this.expr = expr;
+        this.cb = cb;
+
+        //缓存当前值
+        this.value = this.get();
+    }
+
+    //获取当前值
+    get() {
+        //把当前订阅者添加到全局
+        Dep.target = this; //watcher实例
+        //获取当前值
+        var value = this.vm.$data[this.expr];
+        //清空全局
+        Dep.target = null;
+        //返回
+        return value;
+    }
+    //提供一个更新
+    update() {
+        //获取新值
+        var newValue = this.vm.$data[this.expr];
+        //获取老值
+        var oldValue = this.value;
+        //执行回调
+        if(newValue !== oldValue) {
+            this.cb(newValue); //效果一样关键需不需要改变this指向this.cb.call(this.vm,newValue)
+        }
+    }
+
+}
+</script>
+<script>
+    var vm = new MVVM({
+        el: "#app", //挂载视图
+        data: {
+            msg:'这是自己写的mvvm框架',
+            message:'mvvm出来吧'
+        } //定义数据
+    })
+</script>
+</body>
+</html>
