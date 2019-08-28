@@ -79,3 +79,9 @@ let js=req('./b');
 js=req('./b');
 console.log(json);
 console.log(js);
+
+//node中模块分为3类 文件模块 第三方模块 内置模块
+//模块的查找路径
+
+//同名 不同版本有的会先找文件 找不到再找文件夹
+//第三方模块查找 会找node_modules 下的同名文件夹下的 index.js 如果找不到会向上级node_modules查找 如果根目录找不到就报错 会先找main对应的字段 如果有直接返回 如果没有 会找index.js / index.json
