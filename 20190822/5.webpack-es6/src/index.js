@@ -33,5 +33,3 @@ btn.addEventListener("click",function(){
     })//动态使用jsonp加载一个新的文件
 })
 document.body.appendChild(btn);
-
-

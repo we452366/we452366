@@ -19,6 +19,7 @@ let shcool={name:"zf",age:10,a:{b:2},fn:()=>{},c:undefined,reg:/\d+/}
 //instanceof 可以判断类型 判断是谁的实例
 //constructor 构造函数
 
+//V8引擎的垃圾回收
 const deepClone=(value,hash=new WeakMap)=>{
     if(value==null) return value;//排除掉null和undefined 的情况
     if(typeof value !== 'object') return value;//这里包含了函数类型

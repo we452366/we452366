@@ -12,7 +12,7 @@ Function.prototype.before=function(beforeFn){
         this(...args);//展开运算符
     }
 }
-//AOP 面向切片编程 把核心抽离出来 在核心基础上增加功能
+//AOP 面向切片编程 把核心抽离出来 在核心基础上增加功能 将函数进行包装
 const say=(...args)=>{//剩运算符把剩余所有参数组成一个数组
     console.log('说话');
 }
