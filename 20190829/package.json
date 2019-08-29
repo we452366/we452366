@@ -1,0 +1,37 @@
+{
+  "name": "vleedesigntheory",
+  "version": "2.0.0",
+  "description": "ui design",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/we452366/we452366.git"
+  },
+  "keywords": [
+    "design"
+  ],
+  "bin": {
+    "vleedesigntheory": "./bin/www",
+    "vlee": "./bin/www"
+  },
+  "author": "we452366",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/we452366/we452366/issues"
+  },
+  "homepage": "https://github.com/we452366/we452366#readme",
+  "dependencies": {
+    "mime": "^2.4.4",
+    "ncp": "^2.0.0",
+    "webpack": "^4.39.3"
+  },
+  "peerDependencies": {
+    "jquery": "3.4.1"
+  },
+  "bundleDependencies": [
+    "jquery"
+  ]
+}
