@@ -1,4 +1,6 @@
 //发布订阅模块 pub / sub
+//发布订阅优势 解耦合
+//on once off newListener
 let eventEmitter=require('./eventemitter');
 let util=require('util');
 let e =new eventEmitter();

@@ -24,6 +24,6 @@ function render(templateStr,obj){
     let fn=new Function('xxx',head+content+tail);
     return fn(obj);
 }
-//模板引擎的实现原理是 1) with语法 2) new Function
+//模板引擎的实现原理是 1) with语法 2) new Function 将字符串转化成函数 3) 字符串拼接
 let r=render(template,{arr:[1,2,3]});
 console.log(r);

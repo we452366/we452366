@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>fileReader</title>
+</head>
+<body>
+    <div id="drag" style="width:200px;height:200px;background-color: #ff0"></div>
+    <script>
+        drag.addEventListener('dragover',(e)=>{
+            e.preventDefault();
+        })
+        drag.addEventListener('drag',(e)=>{
+            e.preventDefault();
+            let fr=new FileReader();
+            fr.readAsDataURL(e.dataTransfer.files[0])
+            fr.onload=function(e){
+                let img=new Image();
+                img.src=e.target.result;
+                document.body.appendChild(img);
+            }
+        })
+        //与parentNode.appendChild()的区别在于：
+//parentNode.append()可以同时传入多个节点或字符串，没有返回值；
+//而parentNode.appendChild()只能传一个节点，且不直接支持传字符串(需要parentNode.appendChild(document.createTextElement('字符串'))代替)，返回追加的Node节点
+    </script>
+</body>
+</html>
