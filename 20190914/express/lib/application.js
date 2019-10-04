@@ -74,7 +74,7 @@ Application.prototype.use=function(path,handler){
     this.lazy_route();
     if(typeof handler !== 'function'){
         handler=path;
-        paht='/';
+        path='/';
     }
     this.router.use(path,handler);
 }
@@ -82,7 +82,7 @@ Application.prototype.listen=function(){
     let server=http.createServer((req,res)=>{
         this.lazy_route();
         function done(){
-            res.end(`Cannot $(req.method) $(req.url)`);
+            res.end(`Cannot ${req.method} ${req.url}`);
         };
         this.router.handle_request(req,res,done);
     })
