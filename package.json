@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/we452366/we452366/issues"
   },
-  "homepage": "https://github.com/we452366/we452366#readme"
+  "homepage": "https://github.com/we452366/we452366#readme",
+  "dependencies": {
+    "vue": "^2.6.10"
+  }
 }
