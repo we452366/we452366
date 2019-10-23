@@ -54,11 +54,12 @@ template不灵活，递归，有功能缺陷，重复操作
 - 作用域插槽slot-scope：
 借助函数组件可以自定义行为，但很麻烦，可以用作用域插槽将组件内容共享出来 可以复用
 
-### dom-diff
+### vue的dom-diff算法
 虚拟dom就是一个普通的js对象，包含type，key，props，children，text，DOMElement
 - 模板解析出来虚拟dom对象
 - h.js:对应vue中的h函数，用于返回vnode
-    - vnode.js：h.js中调用vnode函数将非vnode对象转换为vnode对象
-- patch.js：将vnode对象patch打补丁到真实dom上，出口是一个mount函数将虚拟dom挂到root上
+- vnode.js：h.js中调用vnode函数将非vnode对象转换为vnode对象，出口isVnode用于判断是否是虚拟结点，出口isSameVnode用于判断是否是相同的结点，类型相同并且key相同
+- patch.js：将vnode对象patch打补丁到真实dom上，出口mount函数将虚拟dom挂到root上，出口patch函数用于新老虚拟结点打补丁
     - createDOMElementFromVnode函数将虚拟dom结点封装成一个真实dom结点
     - updateProperties函数用于更新属性，新节点中没有的属性置为空，老节点有而新节点没有的属性删除
+    - updateChildren函数用于比较新老子元素，设置了四个指针oldStartIndex,oldEndeIndex,newStartIndex,newEndIndex，对特殊情况进行了优化如abcd变化bcda，abcd变化为abcdef
