@@ -1,0 +1,14 @@
+{
+  "name": "vee-tree",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build":"webpack",
+    "dev":"webpack-dev-server",
+    "test":"jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
