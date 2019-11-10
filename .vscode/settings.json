@@ -1,7 +1,11 @@
 {
     "cSpell.ignoreWords": [
+        "antd",
+        "component",
         "keyof",
         "typeof",
+        "unmount",
+        "will",
         "zhufeng"
     ]
 }
