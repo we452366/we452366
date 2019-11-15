@@ -5,6 +5,8 @@
         "debounced",
         "keyof",
         "nginx",
+        "onpopstate",
+        "onpushstate",
         "typeof",
         "unmount",
         "will",
