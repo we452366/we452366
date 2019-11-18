@@ -7,12 +7,15 @@
     "@types/node": "12.12.7",
     "@types/react-dom": "16.9.4",
     "antd": "^3.25.0",
+    "bootstrap": "^3.4.1",
     "koa": "^2.11.0",
     "koa-body": "^4.1.1",
     "koa-static": "^5.0.0",
+    "path-to-regexp": "^5.0.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-scripts": "3.2.0",
+    "redux": "^4.0.4",
     "typescript": "3.7.2"
   },
   "scripts": {

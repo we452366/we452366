@@ -1,6 +1,7 @@
-import {Location} from './history'
+import {History,Location} from './history'
 export interface ContextValue{
-    location?:Location
+    location?:Location;
+    history?:History;
 }
 export interface match<Params={}>{
     params:Params;
@@ -15,5 +16,5 @@ export interface RouteComponentProps<
 >{
     history:History;
     location:Location<S>;
-    match:match<Params>;
+    match?:match<Params>;
 }
