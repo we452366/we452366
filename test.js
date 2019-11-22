@@ -1,10 +1,19 @@
-class Chameleon{
-    static colorChange(newColor){
-        this.newColor=newColor;
-    }
-    constructor({nweColor="green"}={}){
-        this.newColor=newColor;
+function foo(something){
+    console.log(this.a,something);
+    return this.a+something
+}
+
+function bind(fn,obj){
+    return function(){
+        return fn.apply(obj,arguments)
     }
 }
-const freddie=new Chameleon({newColor:"purple"});
-freddie.colorChange("orange")
+
+var obj={
+    a:2
+};
+
+var bar=bind(foo,obj)
+
+var b=bar(3);
+console.log(b);
