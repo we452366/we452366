@@ -11,18 +11,22 @@ export type Reducer<S=any,A extends Action=AnyAction>=(
     action:A
 )=>S
 
-export interface Dispatch<A extends Action = AnyAction>{
-    (action:A):A
+export type Dispatch<A=AnyAction>=<T extends A>(action:T)=>T
+
+export type ReducerMapObject<S=any,A extends Action=Action>={
+    [K in keyof S]:Reducer<S[K],A>
 }
 
+export type Subscribe=(listener:Listener)=>Unsubscribe;
 export interface Unsubscribe {
     ():void
 }
 
+export type Listener=()=>void;
 export interface Store<S=any,A extends Action=AnyAction>{
     dispatch:Dispatch<A>;
     getState():S;
-    subscribe(listener:()=>void):Unsubscribe;
+    subscribe(listener:Listener):Unsubscribe;
 }
 
 export interface StoreCreator{
@@ -31,3 +35,30 @@ export interface StoreCreator{
         preloadedState?:S
     ):Store<S,A>
 }
+
+export interface MiddlewareAPI<D extends Dispatch=Dispatch,S=any>{
+    dispatch:D
+    getState():S
+}
+
+export interface Middleware<
+    DispatchExt={},
+    S=any,
+    D extends Dispatch=Dispatch
+>{
+    (api:MiddlewareAPI<D,S>):(
+        next:Dispatch<AnyAction>
+    )=>(action:any)=>any
+}
+
+export type StoreEnhancerStoreCreator=<
+    S=any,
+    A extends Action=AnyAction
+>(
+    reducer:Reducer<S,A>,
+    preloadedState?:S
+)=>Store<S,A>
+
+export type StoreEnhancer=(
+    next:StoreEnhancerStoreCreator
+)=>StoreEnhancerStoreCreator

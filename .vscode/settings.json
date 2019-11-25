@@ -5,6 +5,7 @@
         "debounced",
         "farr",
         "keyof",
+        "middlewares",
         "nginx",
         "onpopstate",
         "onpushstate",

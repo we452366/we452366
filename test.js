@@ -1,19 +1,16 @@
-function foo(something){
-    console.log(this.a,something);
-    return this.a+something
-}
-
-function bind(fn,obj){
-    return function(){
-        return fn.apply(obj,arguments)
+function foo(){
+    return (a)=>{
+        console.log(this.a)
     }
 }
 
-var obj={
+var obj1={
     a:2
-};
+}
 
-var bar=bind(foo,obj)
+var obj2={
+    a:3
+}
 
-var b=bar(3);
-console.log(b);
+var bar=foo.call(obj1);
+bar.call(obj2)

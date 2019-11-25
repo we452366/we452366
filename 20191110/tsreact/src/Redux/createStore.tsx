@@ -16,7 +16,7 @@ const createStore:StoreCreator=<S,A extends Action,Ext,StateExt>(reducer:Reducer
         };
     }
 
-    const dispatch:Dispatch<A>=(action:A):A=>{
+    const dispatch:any=(action:A):A=>{
         currentState=reducer(currentState,action);
         for(let i=0;i<currentListeners.length;i++){
             const listener=currentListeners[i];
