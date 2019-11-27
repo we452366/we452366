@@ -1,16 +1,7 @@
-function foo(){
-    return (a)=>{
-        console.log(this.a)
-    }
+function fib(n){
+    return Array(n).fill().reduce(([a,b],_)=>{
+        return [b,a+b]
+    },[0,1])[0]
 }
+console.log(fib(1),fib(2),fib(3),fib(4),fib(5));
 
-var obj1={
-    a:2
-}
-
-var obj2={
-    a:3
-}
-
-var bar=foo.call(obj1);
-bar.call(obj2)
