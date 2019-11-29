@@ -1,14 +1,17 @@
 import React from 'react';
 import {ReactReduxContext} from 'react-redux';
 import {Router} from 'react-router';
-import {LOCATION_CHANGE} from './constants';
-import {History,UnregisterCallback} from 'history';
+import {LOCATION_CHANGE,Action} from '.';
+import {History,Location,UnregisterCallback} from 'history';
 
-export default class ConnectedRouter extends React.Component{
+interface Props{
+    history:History
+}
+export default class ConnectedRouter extends React.Component<Props>{
     static contextType=ReactReduxContext;
-    unlisten:UnregisterCallback;
+    unListen:UnregisterCallback;
     componentDidMount(){
-        this.unlisten=this.props.history.listen((location,action)=>{
+        this.unListen=this.props.history.listen((location:Location,action:Action)=>{
             this.context.store.dispatch({
                 type:LOCATION_CHANGE,
                 payload:{
@@ -19,7 +22,7 @@ export default class ConnectedRouter extends React.Component{
         })
     }
     componentWillMount(){
-        this.unlisten();
+        this.unListen();
     }
     render(){
         let {history,children}=this.props;

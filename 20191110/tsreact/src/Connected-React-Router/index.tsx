@@ -1,9 +1,11 @@
 import push from './push';
 import routerMiddleware from './routerMiddleware';
-import connectedRouter from './connectedRouter';
+import connectRouter from './connectRouter';
+import ConnectedRouter from './ConnectedRouter';
 export {
     push,
     routerMiddleware,
-    connectedRouter
+    connectRouter,
+    ConnectedRouter
 }
 export * from './types';
