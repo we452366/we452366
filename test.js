@@ -1,7 +1,13 @@
-function fib(n){
-    return Array(n).fill().reduce(([a,b],_)=>{
-        return [b,a+b]
-    },[0,1])[0]
+function fun(){
+    for(var i=0,arr=[];i<3;i++){
+        arr[i]=function(){
+            console.log(i)
+        }
+    }
+    return arr;
 }
-console.log(fib(1),fib(2),fib(3),fib(4),fib(5));
+var funs=fun();
+funs[0]();
+funs[1]();
+funs[2]();
 

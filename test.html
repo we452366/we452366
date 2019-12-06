@@ -8,21 +8,17 @@
 </head>
 <body>
 <script>
-    function foo(something){
-        console.log(this.a,something);
-        return this.a+something
-    }
-
+    var a=10;
     var obj={
-        a:2
-    };
-
-    var bar=function(){
-        return foo.apply(obj,arguments)
+        a:20,
+        intr:function(){
+            var a=30;
+            console.log(this.a);
+        }
     }
-
-    var b=bar(3);
-    console.log(b);
+    obj.intr();
+    var intr=obj.intr;
+    intr();
 </script>
 </body>
 </html>
