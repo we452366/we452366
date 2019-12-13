@@ -7,18 +7,53 @@
     <title>Document</title>
 </head>
 <body>
+        
 <script>
-    var a=10;
-    var obj={
-        a:20,
-        intr:function(){
-            var a=30;
-            console.log(this.a);
-        }
+    console.log('1 a=',a);
+    console.log('1 window.a=',window.a);
+    {
+        console.log('2 a=',a);
+        console.log('2 window.a=',window.a);
+        function a(){};
+        console.log('3 a=',a);
+        console.log('3 window.a=',window.a);
+        a=50;
+        console.log('4 a=',a);
+        console.log('4 window.a=',window.a);
     }
-    obj.intr();
-    var intr=obj.intr;
-    intr();
+    console.log('5 a=',a);
+    console.log('5 window.a=',window.a);
+
+
+    console.log('------------------------');
+
+
+    console.log('1 b=',b);
+    console.log('1 window.b=',window.b);
+    {
+        console.log('2 b=',b);
+        console.log('2 window.b=',window.b);
+        b=50;
+        console.log('3 b=',b);
+        console.log('3 window.b=',window.b);
+        function b(){};
+        console.log('4 b=',b);
+        console.log('4 window.b=',window.b);
+    }
+    console.log('5 b=',b); 
+    console.log('5 window.b=',window.b);  
 </script>
+<!-- <script>
+        {
+            function a(){};
+            a=50;
+        }
+        console.log(a);
+        {   
+            b=50;
+            function b(){};
+        }
+        console.log(b);
+</script> -->
 </body>
 </html>
