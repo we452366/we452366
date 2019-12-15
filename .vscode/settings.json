@@ -4,6 +4,7 @@
         "component",
         "debounced",
         "farr",
+        "geolocation",
         "instanceof",
         "keyof",
         "middlewares",
