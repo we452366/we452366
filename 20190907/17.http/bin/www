@@ -1,0 +1,10 @@
+#! /usr/bin/env node
+
+// babel es6->es5
+// @babel/cli 功能是在命令杭州可以编译代码
+// @babel/core 解析核心模块 
+// @babel/preset-env 将es6 -> es5
+
+
+// 这个文件的作用只做require
+require('../dist/main');

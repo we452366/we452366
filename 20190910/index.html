@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 跨域  域名 协议 端口号 其中任何一个不满足都是跨域-->
+    123
+
+    <script>
+        // axios 是基于 xhr 来实现 支持promise,axios 自带了拦截器
+
+        // fetch  fetch请求 并且api很底层， 不能终止fetch
+
+        // 如果用户发送options请求 ，就是试探能不能访问我
+
+        // 默认情况 cookie 是不允许跨域设置
+        fetch('http://localhost:3000/api',{
+            method:'DELETE',
+            headers:{
+                token:'xxx' // 自定义header
+            },
+            credentials:'include'
+        }).then(res=>{
+            return res.json();
+        }).then(json=>{
+            console.log(json);
+        })
+    </script>
+</body>
+</html>

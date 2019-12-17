@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+    </head>
+    <body>
+        <div style="background: red;width: 100px;height:100px" id="d"></div>
+        <script>
+            d.addEventListener('dragover',function(e){
+                e.preventDefault();
+            });
+            d.addEventListener('drop',function(e){
+                e.preventDefault();
+                let xhr = new XMLHttpRequest();
+                let fd = new FormData();
+                xhr.open('post','/profile');
+
+                // 传输多张图片 必须循环 key的值必须是同一个
+                Array.from(e.dataTransfer.files).forEach(file=>{
+                    fd.append('avatar',file);
+                })
+              
+                xhr.onload = function(){
+                    alert('成功')
+                }
+                xhr.send(fd);
+            });
+        </script>
+    </body>
+</html>
+
+<!-- 下周 1 - 4 讲webpack (每天3小时) 周六讲flutter -->
+<!-- 下周 node做个结尾 进程 进群  周六将fullter -->
+<!-- 10月8 号正常上课 react -->
+
+<!-- 先讲用法  -->
+
+<!-- body-parser实现（看看源码） -->
+<!-- 数据库 部署  优化 -->
