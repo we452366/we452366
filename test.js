@@ -1,9 +1,8 @@
-setTimeout(()=>{
-    console.log(1);
-});
-
-new Promise((resolve,reject)=>{
-    resolve();
-}).then(()=>{
-    console.log(2);
-});
+const obj={
+    a:()=>console.log(this)
+}
+obj.a();
+const test=obj.a;
+test();
+const test2={};
+obj.a.call(test2)
