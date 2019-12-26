@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>2</title>
+    <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                overflow: hidden;
+                background: #000;
+            }
+            #wrapper {
+                position: absolute;
+                top: 50px;
+                left: 80%;
+                width: 200px;
+                height: 200px;
+                z-index: 999;/* 防止星星遮挡住 */
+            }
+            span {
+                width: 30px;
+                height: 30px;
+                position: absolute;/* 方便星星的随机位置 */
+                background: url('./star.svg') no-repeat;/* 这里请换成自己本地的星星图片 */
+                background-size: 100% 100%;
+                animation: flash 3s linear infinite;/* 星星闪烁动画 */
+            } 
+            /* 鼠标移入，星星放大 */
+            span:hover {
+                transform: scale(3, 3) rotate(180deg) !important;
+                transition: all 1s;
+            }
+         /* 星星闪烁 */
+        @keyframes flash {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <!-- 月亮 -->
+        <div id="circle"></div>
+    </div>             
+    <script>
+            window.onload = function () {
+                // 获取窗口宽高
+                var width = document.documentElement.clientWidth;
+                var height = document.documentElement.clientHeight;
+                for (var i = 0; i < 200; i++) {
+                    // 创建星星
+                    var span = document.createElement('span');
+                    document.body.appendChild(span);
+                    // 生成星星横纵坐标的位置
+                    var x = parseInt(Math.random() * width);
+                    var y = parseInt(Math.random() * height);
+                    span.style.top = y + 'px';
+                    span.style.left = x + 'px';
+                    span.style.zIndex = 0;
+                    // 使星星的大小不一
+                    var scale = Math.random() * 1.5;
+                    span.style.transform = "scale(" + scale + "," + scale + ")";
+                    // 随机闪烁
+                    var rate = Math.random() * 1.5;
+                    span.style.animationDelay = rate + "s";
+                }
+            }    
+    </script>
+</body>
+</html>
