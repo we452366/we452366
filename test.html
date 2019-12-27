@@ -5,28 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <style>
-        *{
-            margin:0;
-            padding:0;
-        }
-        #div1{
-            background-color:red;
-            height:100px
-        }
-        #div2{
-            background-color: blue;
-            height: 200px;
-            position: absolute;
-            z-index:1000;
-        }
-    </style>
 </head>
 <body>
-    <div id="div1"></div>
-    <div id="div2"></div>
 <script>
-    
+    var test=(function(i){
+        return function(){
+            alert(i*=2);
+        }
+    })(2);
+    test(5);
 </script>
 </body>
 </html>
