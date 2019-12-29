@@ -1,4 +1,110 @@
-## Opera中国
+## 随便科技
+
+### css
+
+### 使用css，让一个div消失在视野中，发挥想象力 ？
+```
+让元素div消失在视野中
+1.position:absolute/relative/fixed  +  方位 top/bottom/left/right: -9999px
+2.display:none
+3.visibility:hidden
+4.width:0 + overflow:hidden
+  height:0 +  overflow:hidden
+5.margin-top/bottom/left/right:-9999px;
+6.background-color:transparent
+7.opacity:0
+8.transform: translateX(-9999px)/translateY(-9999px)/translate(-9999px,-9999px)
+9.transform: scale(0)
+```
+
+### 请说明z-index的工作原理，适用范围？
+```
+> CSS 中的z-index属性控制重叠元素的垂直叠加顺序。z-index只能影响position值不是static的元素。
+
+没有定义z-index的值时，元素按照它们出现在 DOM 中的顺序堆叠（层级越低，出现位置越靠上）。非静态定位的元素（及其子元素）将始终覆盖静态定位（static）的元素，而不管 HTML 层次结构如何。
+
+层叠上下文是包含一组图层的元素。在一组层叠上下文中，其子元素的z-index值是相对于该父元素而不是 document root 设置的。每个层叠上下文完全独立于它的兄弟元素。如果元素 B 位于元素 A 之上，则即使元素 A 的子元素 C 具有比元素 B 更高的z-index值，元素 C 也永远不会在元素 B 之上.
+
+每个层叠上下文是自包含的：当元素的内容发生层叠后，整个该元素将会在父层叠上下文中按顺序进行层叠。少数 CSS 属性会触发一个新的层叠上下文，例如opacity小于 1，filter不是none，transform不是none。
+```
+
+### 如何使一个div里面的文字垂直居中，且该文字的大小根据屏幕大小自适应？
+```
+display:table
+display:table-cell
+```
+
+### 不考虑其它因素，下面哪种的渲染性能比较高？1、box a{}；2、a{}
+```
+一. CSS选择器性能是如何消耗的？
+工作原理：浏览器利用CSS选择器来匹配文档元素。
+
+工作流程：例如 #hd .nav > a { padding-left: 15px }
+
+　　1.在文档所有元素中寻找所有的 a 标签。
+
+　　2.在1的结果中寻找其父元素的类名为“.nav”的元素。
+
+　　3.在2的结果中寻找其父辈元素的ID为“hd”的元素。
+
+　　4.在3的结果中增加样式。
+
+ 
+
+二. 分析怎么提升CSS选择器的性能?
+在工作流程中可以看出有两个方面可以提升性能：寻找的效率和寻找的次数
+
+效率：选择器的搜索个数，个数越少性能越好。
+
+次数：选择器的层数，层数越少性能越好。
+
+ 
+三. 提升CSS选择器性能的方式
+方式一（减少搜索个数）：选择效率高的选择器，参考如下建议多用类选择器少用标签选择器。
+
+CSS选择器搜索个数从少到多的排序：
+　　id选择器（#myid）
+　　类选择器（.myclassname）
+　　标签选择器（div,h1,p）
+　　相邻选择器（h1+p）
+　　子选择器（ul > li）
+　　后代选择器（li a）
+　　通配符选择器（*）
+　　属性选择器（a[rel="external"]）
+　　伪类选择器（a:hover, li:nth-child）
+
+ 
+
+方式二（减少层数）：使用BEM（block_element-modifier）的命名方式。
+
+BEM：块（block）、元素（element）、修饰符（modifier）
+
+例如：
+
+　　.hd{}
+
+　　.hd_nav{}
+
+　　.hd_nav_a{}
+
+　　.hd_nav_a-link{}
+
+　　.hd_nav_a-visited{}
+
+ 
+
+方式三（减少层数）：使用面向属性的命名方式。
+
+面向属性：以“样式属性的功能”来给选择器命名。
+
+例如：
+
+　　.l{ float: left }
+
+　　.tc{ text-align:center; }
+
+　　.auto{ margin-left:auto; margin-right:auto; }
+```
 
 ### js原生部分
 
@@ -161,4 +267,50 @@ alert()
   }
 主 UI 后续代码
 一旦如此实现，可见，在alert 的内部消息循环有条件退出前，主代码会被阻塞。
+```
+
+### 你有对 Vue 项目进行哪些优化？
+```
+- 代码层面的优化：
+    - v-if 和 v-show 区分使用场景
+    - computed 和 watch 区分使用场景
+    - v-for 遍历必须为 item 添加 key，且避免同时使用 v-if
+    - 长列表性能优化
+    - 事件的销毁
+    - 图片资源懒加载
+    - 路由懒加载
+    - 第三方插件的按需引入
+    - 优化无限列表性能
+    - 服务端渲染 SSR or 预渲染
+
+- Webpack 层面的优化：
+    - Webpack 对图片进行压缩
+    - 减少 ES6 转为 ES5 的冗余代码
+    - 提取公共代码
+    - 模板预编译
+    - 提取组件的 CSS
+    - 优化 SourceMap
+    - 构建结果输出分析
+    - Vue 项目的编译优化
+
+- 基础的 Web 技术的优化：
+    - 开启 gzip 压缩
+    - 使用Chrome Performance 查找性能瓶颈
+    - 减少http请求，合理设置http缓存
+    - 使用浏览器缓存
+    - css sprites
+    - lazyload images
+    - css放最上部，js放最下面
+    - 异步请求callback
+    - 减少cookie传输
+    - JavaScript代码优化：
+        - dom：html colleciton、重绘
+        - 慎用with
+        - 避免使用eval和Function
+        - 减少作用域链查找
+        - 数据访问
+        - 字符串拼接
+    - css选择符优化
+    - cdn加速
+    - 反向代理
 ```
