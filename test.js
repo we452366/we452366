@@ -1,11 +1,9 @@
-function A(){
-
-}
-function B(){
-    return new A();
-}
-A.prototype=new A();
-B.prototype=new B();
-var a=new A();
-var b=new B();
-console.log(a.__proto__==b.__proto__)
+const promise=new Promise((resolve,reject)=>{
+    console.log(1);
+    resolve();
+    console.log(2)
+});
+promise.then(()=>{
+    console.log(3);
+});
+console.log(4);
