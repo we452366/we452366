@@ -1072,6 +1072,23 @@ alert(a);
 ```
 ```
 
+### DOM和BOM有什么区别
+```
+- DOM：
+Document Object Model，文档对象模型
+
+DOM 是为了操作文档出现的 API，document 是其的一个对象
+
+DOM和文档有关，这里的文档指的是网页，也就是html文档。DOM和浏览器无关，他关注的是网页本身的内容。
+
+- BOM：
+Browser Object Model，浏览器对象模型
+
+BOM 是为了操作浏览器出现的 API，window 是其的一个对象
+
+window 对象既为 javascript 访问浏览器提供API，同时在 ECMAScript 中充当 Global 对象
+```
+
 ### MVVM和MVC的区别？
 ```
 - MVC：MVC模式可以这样理解，将html看成view;js看成controller，处理用户与应用的交互，响应对view的操作（对事件的监听），调用Model对数据进行操作，完成model与view的同步（根据model的改变，通过选择器对view进行操作）;将js的ajax当做Model，从服务器获取数据，MVC是单向的。
