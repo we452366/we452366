@@ -5,8 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <style>
+        .container{
+            display: flex;
+            flex-direction: row;
+            width:100%;
+        }
+        .row{
+            flex:1;
+            display:flex;
+        }
+        .col{
+            width:100%;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="row">
+            <span class="col" style="background-color:red;">111</span>
+        </div>
+        <div class="row">
+            <span class="col" style="background-color:yellow;">222</span>
+            <span class="col" style="background-color:green;">333</span>
+        </div>
+    </div>
 <script>
     
 </script>
