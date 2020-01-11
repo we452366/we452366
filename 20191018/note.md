@@ -1,4 +1,5 @@
-## 
+## Vue全家桶
+
 ### 面试题
 - computed和watch有什么区别？
     - 都是基于new Watcher来实现的,computed内部具有缓存，如果内部没有变化，不会重新执行，而method没有缓存；watch每次值变化后，都能执行对应的回调

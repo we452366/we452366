@@ -1775,6 +1775,11 @@ bootstrap是基于原生html+js开发，比较适合配合jQuery
 事件代理
 ```
 
+#### 正则表达式中/s+/是什么意思？
+```
+空字符
+```
+
 #### 你对jQuery怎么看？它和原生js有什么区别？
 https://www.cnblogs.com/hyesc/articles/7586782.html
 ```

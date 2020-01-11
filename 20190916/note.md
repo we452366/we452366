@@ -734,9 +734,8 @@ eval eval执行
 eval-source-map 生成sourcemap
 cheap-module-eval-source-map 不包含列
 cheap-eval-source-map 无法看到真正的源码
-12.1 sourcemap
 
-12.1 生成sourcemap
+##### 生成sourcemap
 
 script.js
 
@@ -764,17 +763,17 @@ sourceRoot	转换前的文件所在的目录。如果与转换前的文件在同
 sources	转换前的文件。该项是一个数组，表示可能存在多个文件合并。
 names	转换前的所有变量名和属性名
 mappings	记录位置信息的字符串
-12.2 mappings属性
 
+##### mappings属性
 关键就是map文件的mappings属性。这是一个很长的字符串，它分成三层。 |对应|含义| |:----|:----| |第一层是行对应|以分号（;）表示，每个分号对应转换后源码的一行。所以，第一个分号前的内容，就对应源码的第一行，以此类推。| |第二层是位置对应|以逗号（,）表示，每个逗号对应转换后源码的一个位置。所以，第一个逗号前的内容，就对应该行源码的第一个位置，以此类推。| |第三层是位置转换|以VLQ编码表示，代表该位置对应的转换前的源码位置。|
 "mappings":"AAAA,IAAIA,EAAE,CAAN,CACIC,EAAE,CADN,CAEIC,EAAE;",
-12.3 位置对应的原理
 
+##### 位置对应的原理
 每个位置使用五位，表示五个字段。 |位置|含义| |:----|:----| |第一位|表示这个位置在（转换后的代码的）的第几列| |第二位|表示这个位置属于sources属性中的哪一个文件| |第三位|表示这个位置属于转换前代码的第几行| |第四位|表示这个位置属于转换前代码的第几| |第五位|表示这个位置属于names属性中的哪一个变量|
 首先，所有的值都是以0作为基数的。其次，第五位不是必需的，如果该位置没有对应names属性中的变量，可以省略第五位,再次，每一位都采用VLQ编码表示；由于VLQ编码是变长的，所以每一位可以由多个字符构成
 如果某个位置是AAAAA，由于A在VLQ编码中表示0，因此这个位置的五个位实际上都是0。它的意思是，该位置在转换后代码的第0列，对应sources属性中第0个文件，属于转换前代码的第0行第0列，对应names属性中的第0个变量。
-12.4 VLQ编码
 
+##### VLQ编码
 VLQ 是 Variable-length quantity 的缩写,它的特点就是可以非常精简地表示很大的数值
 VLQ编码是变长的。如果（整）数值在-15到+15之间（含两个端点），用一个字符表示；超出这个范围，就需要用多个字符表示。它规定，每个字符使用6个两进制位，正好可以借用Base 64编码的字符表
 base64
@@ -794,20 +793,20 @@ base64vlq在线转换
 查表可知，100000为g，000001为B。因此，数值16的VLQ编码为gB
 
 #### 打包第三方类库
-13.1 直接引入
 
+##### 直接引入
 import _ from 'lodash';
 alert(_.join(['a','b','c'],'@'));
-13.2 插件引入
 
+##### 插件引入
 webpack配置ProvidePlugin后，在使用时将不再需要import和require进行引入，直接使用即可
 _ 函数会自动添加到当前模块的上下文，无需显示声明
-+ new webpack.ProvidePlugin({
-+     _:'lodash'
-+ })
+new webpack.ProvidePlugin({
+    _:'lodash'
+})
 没有全局的$函数，所以导入依赖全局变量的插件依旧会失败
-13.3 expose-loader
 
+##### expose-loader
 The expose loader adds modules to the global object. This is useful for debugging
 不需要任何其他的插件配合，只要将下面的代码添加到所有的loader之前
 require("expose-loader?libraryName!./file.js");
@@ -816,21 +815,21 @@ require("expose-loader?libraryName!./file.js");
   loader: "expose-loader?jQuery"
 }
 require("expose-loader?$!jquery");
-13.4 externals
 
+##### externals
 如果我们想引用一个库，但是又不想让webpack打包，并且又不影响我们在程序中以CMD、AMD或者window/global全局等方式进行使用，那就可以通过配置externals
 
  const jQuery = require("jquery");
  import jQuery from 'jquery';
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
-+ externals: {
-+         jquery: 'jQuery'//如果要在浏览器中运行，那么不用添加什么前缀，默认设置就是global
-+ },
-module: {
-13.5 html-webpack-externals-plugin
+externals: {
+        jquery: 'jQuery'//如果要在浏览器中运行，那么不用添加什么前缀，默认设置就是global
+}
+
+##### html-webpack-externals-plugin
 
 外链CDN
-+ const htmlWebpackExternalsPlugin= require('html-webpack-externals-plugin');
+const htmlWebpackExternalsPlugin= require('html-webpack-externals-plugin');
 new htmlWebpackExternalsPlugin({
             externals:[
                 {
@@ -862,13 +861,13 @@ module.exports = {
         poll:1000
     }
 }
-webpack定时获取文件的更新时间，并跟上次保存的时间进行比对，不一致就表示发生了变化,poll就用来配置每秒问多少次
-当检测文件不再发生变化，会先缓存起来，等待一段时间后之后再通知监听者，这个等待时间通过aggregateTimeout配置
-webpack只会监听entry依赖的文件
-我们需要尽可能减少需要监听的文件数量和检查频率，当然频率的降低会导致灵敏度下降
+- webpack定时获取文件的更新时间，并跟上次保存的时间进行比对，不一致就表示发生了变化,poll就用来配置每秒问多少次
+- 当检测文件不再发生变化，会先缓存起来，等待一段时间后之后再通知监听者，这个等待时间通过aggregateTimeout配置
+- webpack只会监听entry依赖的文件
+- 我们需要尽可能减少需要监听的文件数量和检查频率，当然频率的降低会导致灵敏度下降
 
 #### 添加商标
-+ new webpack.BannerPlugin('珠峰培训'),
+new webpack.BannerPlugin('珠峰培训'),
 
 #### 拷贝静态文件
 有时项目中没有引用的文件也需要打包到目标目录
@@ -884,28 +883,27 @@ clean-webpack-plugin
 npm i  clean-webpack-plugin -D
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 plugins:[
-new CleanWebpackPlugin({cleanOnceBeforeBuildPatterns: ['**/*', '!static-files*'],})
+    new CleanWebpackPlugin({cleanOnceBeforeBuildPatterns: ['**/*', '!static-files*'],})
 ]
 
 #### 服务器代理
 如果你有单独的后端开发服务器 API，并且希望在同域名下发送 API 请求 ，那么代理某些 URL 会很有用。
 
-18.1 不修改路径
-
+##### 不修改路径
 请求到 /api/users 现在会被代理到请求 http://localhost:3000/api/users。
 proxy: {
   "/api": 'http://localhost:3000'
 }
-18.2 修改路径
 
+##### 修改路径
 proxy: {
     "/api": {
        target: 'http://localhost:3000',
        pathRewrite:{"^/api":""}        
     }            
 }
-18.3 before after
 
+##### before after
 before 在 webpack-dev-server 静态资源中间件处理之前，可以用于拦截部分请求返回特定内容，或者实现简单的数据 mock。
 
 before(app){
@@ -913,8 +911,8 @@ before(app){
     res.json([{id:1,name:'zfpx1'}])
   })
 }
-18.4 webpack-dev-middleware
 
+##### webpack-dev-middleware
 webpack-dev-middleware就是在 Express 中提供 webpack-dev-server 静态服务能力的一个中间件
 
 npm install webpack-dev-middleware --save-dev
@@ -927,30 +925,32 @@ webpackOptions.mode = 'development';
 const compiler = webpack(webpackOptions);
 app.use(webpackDevMiddleware(compiler, {}));
 app.listen(3000);
-webpack-dev-server 的好处是相对简单，直接安装依赖后执行命令即可
-而使用webpack-dev-middleware的好处是可以在既有的 Express 代码基础上快速添加 webpack-dev-server 的功能，同时利用 Express 来根据需要添加更多的功能，如 mock 服务、代理 API 请求等
+- webpack-dev-server 的好处是相对简单，直接安装依赖后执行命令即可
+- 而使用webpack-dev-middleware的好处是可以在既有的 Express 代码基础上快速添加 webpack-dev-server 的功能，同时利用 Express 来根据需要添加更多的功能，如 mock 服务、代理 API 请求等
 
 #### resolve解析
-19.1 extensions
+
+##### extensions
 
 指定extension之后可以不用在require或是import的时候加文件扩展名,会依次尝试添加扩展名进行匹配
 
 resolve: {
   extensions: [".js",".jsx",".json",".css"]
 },
-19.2 alias
+
+##### alias
 
 配置别名可以加快webpack查找模块的速度
 
 每当引入bootstrap模块的时候，它会直接引入bootstrap,而不需要从node_modules文件夹中按模块的查找规则查找
 const bootstrap = path.resolve(__dirname,'node_modules/_bootstrap@3.3.7@bootstrap/dist/css/bootstrap.css');
 resolve: {
-+    alias:{
-+        "bootstrap":bootstrap
-+    }
+    alias:{
+        "bootstrap":bootstrap
+    }
 },
-19.3 modules
 
+##### modules
 对于直接声明依赖名的模块（如 react ），webpack 会类似 Node.js 一样进行路径搜索，搜索node_modules目录
 这个目录就是使用resolve.modules字段进行配置的 默认配置
 resolve: {
@@ -960,8 +960,8 @@ modules: ['node_modules'],
 resolve: {
 modules: [path.resolve(__dirname, 'node_modules')],
 }
-19.4 mainFields
 
+##### mainFields
 默认情况下package.json 文件则按照文件中 main 字段的文件名来查找文件
 
 resolve: {
@@ -970,15 +970,15 @@ resolve: {
   // target 的值为其他时，mainFields 默认值为：
   mainFields: ["module", "main"],
 }
-19.5 mainFiles
 
+##### mainFiles
 当目录下没有 package.json 文件时，我们说会默认使用目录下的 index.js 这个文件，其实这个也是可以配置的
 
 resolve: {
   mainFiles: ['index'], // 你可以添加其他默认使用的文件名
 },
-19.6 resolveLoader
 
+##### resolveLoader
 resolve.resolveLoader用于配置解析 loader 时的 resolve 配置,默认的配置：
 
 module.exports = {
@@ -993,15 +993,15 @@ module.exports = {
 module.noParse 字段，可以用于配置哪些模块文件的内容不需要进行解析
 不需要解析依赖（即无依赖） 的第三方大型类库等，可以通过这个字段来配置，以提高整体的构建速度
 module.exports = {
-// ...
-module: {
-  noParse: /jquery|lodash/, // 正则表达式
-  // 或者使用函数
-  noParse(content) {
-    return /jquery|lodash/.test(content)
-  },
+    // ...
+    module: {
+        noParse: /jquery|lodash/, // 正则表达式
+        // 或者使用函数
+        noParse(content) {
+            return /jquery|lodash/.test(content)
+        },
+    }
 }
-}...
 使用 noParse 进行忽略的模块文件中不能使用 import、require、define 等导入机制
 
 #### DefinePlugin
@@ -1019,10 +1019,10 @@ console.log(PRODUCTION);
 console.log(VERSION);
 console.log(EXPRESSION);
 console.log(COPYRIGHT);
-如果配置的值是字符串，那么整个字符串会被当成代码片段来执行，其结果作为最终变量的值
-如果配置的值不是字符串，也不是一个对象字面量，那么该值会被转为一个字符串，如 true，最后的结果是 'true'
-如果配置的是一个对象字面量，那么该对象的所有 key 会以同样的方式去定义
-JSON.stringify(true) 的结果是 'true'
+- 如果配置的值是字符串，那么整个字符串会被当成代码片段来执行，其结果作为最终变量的值
+- 如果配置的值不是字符串，也不是一个对象字面量，那么该值会被转为一个字符串，如 true，最后的结果是 'true'
+- 如果配置的是一个对象字面量，那么该对象的所有 key 会以同样的方式去定义
+- JSON.stringify(true) 的结果是 'true'
 
 #### IgnorePlugin
 IgnorePlugin用于忽略某些特定的模块，让 webpack 不把这些指定的模块打包进去
@@ -1030,32 +1030,32 @@ IgnorePlugin用于忽略某些特定的模块，让 webpack 不把这些指定�
 import moment from  'moment';
 console.log(moment);
 new webpack.IgnorePlugin(/^\.\/locale/,/moment$/)
-第一个是匹配引入模块路径的正则表达式
-第二个是匹配模块的对应上下文，即所在目录名
+- 第一个是匹配引入模块路径的正则表达式
+- 第二个是匹配模块的对应上下文，即所在目录名
 
 #### 区分环境变量
-日常的前端开发工作中，一般都会有两套构建环境
-一套开发时使用，构建结果用于本地开发调试，不进行代码压缩，打印 debug 信息，包含 sourcemap 文件
-一套构建后的结果是直接应用于线上的，即代码都是压缩后，运行时不打印 debug 信息，静态文件不包括 sourcemap
-webpack 4.x 版本引入了 mode 的概念
-当你指定使用 production mode 时，默认会启用各种性能优化的功能，包括构建结果优化以及 webpack 运行性能优化
-而如果是 development mode 的话，则会开启 debug 工具，运行时打印详细的错误信息，以及更加快速的增量编译构建
-20.1 环境差异
+- 日常的前端开发工作中，一般都会有两套构建环境
+- 一套开发时使用，构建结果用于本地开发调试，不进行代码压缩，打印 debug 信息，包含 sourcemap 文件
+- 一套构建后的结果是直接应用于线上的，即代码都是压缩后，运行时不打印 debug 信息，静态文件不包括 sourcemap
+- webpack 4.x 版本引入了 mode 的概念
+- 当你指定使用 production mode 时，默认会启用各种性能优化的功能，包括构建结果优化以及 webpack 运行性能优化
+- 而如果是 development mode 的话，则会开启 debug 工具，运行时打印详细的错误信息，以及更加快速的增量编译构建
 
-生产环境
-可能需要分离 CSS 成单独的文件，以便多个页面共享同一个 CSS 文件
-需要压缩 HTML/CSS/JS 代码
-需要压缩图片
-开发环境
-需要生成 sourcemap 文件
-需要打印 debug 信息
-需要 live reload 或者 hot reload 的功能...
-20.2 获取mode参数
+##### 环境差异
+- 生产环境
+    - 可能需要分离 CSS 成单独的文件，以便多个页面共享同一个 CSS 文件
+    - 需要压缩 HTML/CSS/JS 代码
+    - 需要压缩图片
+- 开发环境
+    - 需要生成 sourcemap 文件
+    - 需要打印 debug 信息
+    - 需要 live reload 或者 hot reload 的功能...
 
+##### 获取mode参数
 npm install --save-dev optimize-css-assets-webpack-plugin
-  "scripts": {
-+    "dev": "webpack-dev-server --env=development --open"
-  },
+"scripts": {
+    "dev": "webpack-dev-server --env=development --open"
+},
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 module.exports=(env,argv) => ({
@@ -1069,23 +1069,25 @@ module.exports=(env,argv) => ({
         ]:[]
     }
 })
-20.3 封装log方法
 
+##### 封装log方法
 webpack 时传递的 mode 参数，是可以在我们的应用代码运行时，通过 process.env.NODE_ENV 这个变量获取
 export default function log(...args) {
     if (process.env.NODE_ENV == 'development') {
         console.log.apply(console,args);
     }
 }
-20.4 拆分配置
+
+##### 拆分配置
 
 可以把 webpack 的配置按照不同的环境拆分成多个文件，运行时直接根据环境变量加载对应的配置即可
 
-webpack.base.js：基础部分，即多个文件中共享的配置
-webpack.development.js：开发环境使用的配置
-webpack.production.js：生产环境使用的配置
-webpack.test.js：测试环境使用的配置...
-webpack-merge
+- webpack.base.js：基础部分，即多个文件中共享的配置
+- webpack.development.js：开发环境使用的配置
+- webpack.production.js：生产环境使用的配置
+- webpack.test.js：测试环境使用的配置...
+- webpack-merge
+
 const { smart } = require('webpack-merge')
 const webpack = require('webpack')
 const base = require('./webpack.base.js')
@@ -1100,37 +1102,38 @@ image-webpack-loader可以帮助我们对图片进行压缩和优化
 
 npm install image-webpack-loader --save-dev
  {
-          test: /\.(png|svg|jpg|gif|jpeg|ico)$/,
-          use: [
-            'file-loader',
-+           {
-+             loader: 'image-webpack-loader',
-+             options: {
-+               mozjpeg: {
-+                 progressive: true,
-+                 quality: 65
-+               },
-+               optipng: {
-+                 enabled: false,
-+               },
-+               pngquant: {
-+                 quality: '65-90',
-+                 speed: 4
-+               },
-+               gifsicle: {
-+                 interlaced: false,
-+               },
-+               webp: {
-+                 quality: 75
-+               }
-+             }
-+           },
-          ]
+    test: /\.(png|svg|jpg|gif|jpeg|ico)$/,
+    use: [
+    'file-loader',
+    {
+        loader: 'image-webpack-loader',
+        options: {
+        mozjpeg: {
+            progressive: true,
+            quality: 65
+        },
+        optipng: {
+            enabled: false,
+        },
+        pngquant: {
+            quality: '65-90',
+            speed: 4
+        },
+        gifsicle: {
+            interlaced: false,
+        },
+        webp: {
+            quality: 75
         }
+        }
+    },
+    ]
+}
 
 #### 多入口MPA
-有时候我们的页面可以不止一个HTML页面，会有多个页面，所以就需要多入口
-每一次页面跳转的时候，后台服务器都会返回一个新的html文档，这种类型的网站就是多页网站，也叫多页应用
+- 有时候我们的页面可以不止一个HTML页面，会有多个页面，所以就需要多入口
+- 每一次页面跳转的时候，后台服务器都会返回一个新的html文档，这种类型的网站就是多页网站，也叫多页应用
+
 const path=require('path');
 const HtmlWebpackPlugin=require('html-webpack-plugin');
 const htmlWebpackPlugins=[];
@@ -1165,29 +1168,31 @@ module.exports={
 }
 
 #### 日志优化
-日志太多太少都不美观
-可以修改stats
-预设	替代	描述
-errors-only	none	只在错误时输出
-minial	none	发生错误和新的编译时输出
-none	false	没有输出
-normal	true	标准输出
-verbose	none	全部输出
-22.1 friendly-errors-webpack-plugin
+- 日志太多太少都不美观
+- 可以修改stats
 
-success 构建成功的日志提示
-warning 构建警告的日志提示
-error 构建报错的日志提示
+预设 | 替代 | 描述
+errors-only | none | 只在错误时输出
+minial | none | 发生错误和新的编译时输出
+none | false | 没有输出
+normal | true | 标准输出
+verbose | none | 全部输出
+
+##### friendly-errors-webpack-plugin
+- success 构建成功的日志提示
+- warning 构建警告的日志提示
+- error 构建报错的日志提示
 cnpm i friendly-errors-webpack-plugin
-+ stats:'verbose',
-  plugins:[
-+   new FriendlyErrorsWebpackPlugin()
-  ]
+    stats:'verbose',
+    plugins:[
+        new FriendlyErrorsWebpackPlugin()
+    ]
 编译完成后可以通过echo $?获取错误码，0为成功，非0为失败
 
 #### 错误上报
-compiler在每次构建结束之后会触发done的hook
-process.exit可以主动处理报错
+- compiler在每次构建结束之后会触发done的hook
+- process.exit可以主动处理报错
+
 function(){
   this.hooks.done.tap('done',stats=>{
     if(stats.compilation.errors&&stats.compilation.errors.length){
@@ -1200,9 +1205,10 @@ function(){
 #### 日志输出
 "scripts": {
     "build": "webpack",
-+    "build:stats":"webpack --json > stats.json",
+    "build:stats":"webpack --json > stats.json",
     "dev": "webpack-dev-server --open"
-  },
+},
+
 const webpack = require('webpack');
 const config = require('./webpack.config.js');
 webpack(config,(err,stats)=>{
@@ -1224,6 +1230,7 @@ module.exports =smw.wrap({
 #### webpack-bundle-analyzer
 是一个webpack的插件，需要配合webpack和webpack-cli一起使用。这个插件的功能是生成代码分析报告，帮助提升代码质量和网站性能
 cnpm i webpack-bundle-analyzer -D
+
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 module.exports={
   plugins: [
@@ -1244,11 +1251,13 @@ module.exports={
     // })
   ]
 }
+
 {
  "scripts": {
     "dev": "webpack --config webpack.dev.js --progress"
   }
 }
+
 webpack.config.js
 
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
@@ -1270,15 +1279,15 @@ npm run generateAnalyzFile
 npm run analyz
 
 #### polyfill
-28.1 babel-polyfill
 
-babel-polyfill是React官方推荐，缺点是体积大
-babel-polyfill用正确的姿势安装之后，引用方式有三种：
+##### babel-polyfill
+- babel-polyfill是React官方推荐，缺点是体积大
+- babel-polyfill用正确的姿势安装之后，引用方式有三种：
+- require("babel-polyfill");
+- import "babel-polyfill";
+- module.exports = { 　　entry: ["babel-polyfill", "./app/js"] };
 
-require("babel-polyfill");
-import "babel-polyfill";
-module.exports = { 　　entry: ["babel-polyfill", "./app/js"] };
-28.2 polyfill-service
+##### polyfill-service
 
 自动化的 JavaScript Polyfill 服务
 Polyfill.io 通过分析请求头信息中的 UserAgent 实现自动加载浏览器所需的 polyfills
@@ -1287,93 +1296,86 @@ polyfill-io
 <script src="https://polyfill.io/v3/polyfill.min.js"></script>
 
 #### libraryTarget 和 library
-outputlibrarytarget
+- outputlibrarytarget
+- 当用 Webpack 去构建一个可以被其他模块导入使用的库时需要用到它们
+- output.library 配置导出库的名称
+- output.libraryExport 配置要导出的模块中哪些子模块需要被导出。 它只有在 output.libraryTarget 被设置成 commonjs 或者 commonjs2 时使用才有意义
+- output.libraryTarget 配置以何种方式导出库,是字符串的枚举类型，支持以下配置
 
-当用 Webpack 去构建一个可以被其他模块导入使用的库时需要用到它们
+libraryTarget | 使用者的引入方式 | 使用者提供给被使用者的模块的方式
+var | 只能以script标签的形式引入我们的库 | 只能以全局变量的形式提供这些被依赖的模块
+commonjs | 只能按照commonjs的规范引入我们的库 | 被依赖模块需要按照commonjs规范引入
+amd | 只能按amd规范引入 | 被依赖的模块需要按照amd规范引入
+umd | 可以用script、commonjs、amd引入 | 按对应的方式引入
 
-output.library 配置导出库的名称
-output.libraryExport 配置要导出的模块中哪些子模块需要被导出。 它只有在 output.libraryTarget 被设置成 commonjs 或者 commonjs2 时使用才有意义
-output.libraryTarget 配置以何种方式导出库,是字符串的枚举类型，支持以下配置
-libraryTarget	使用者的引入方式	使用者提供给被使用者的模块的方式
-var	只能以script标签的形式引入我们的库	只能以全局变量的形式提供这些被依赖的模块
-commonjs	只能按照commonjs的规范引入我们的库	被依赖模块需要按照commonjs规范引入
-amd	只能按amd规范引入	被依赖的模块需要按照amd规范引入
-umd	可以用script、commonjs、amd引入	按对应的方式引入
-29.1 var (默认)
-
+#### var (默认)
 编写的库将通过var被赋值给通过library指定名称的变量。
 
-29.1.1 index.js
-
+##### index.js
 module.exports =  {
     add(a,b) {
         return a+b;
     }
 }
-29.1.2 bundle.js
 
+##### bundle.js
 var calculator=(function (modules) {}({})
-29.1.3 index.html
 
-    <script src="bundle.js"></script>
-    <script>
-        let ret = calculator.add(1,2);
-        console.log(ret);
-    </script>
-29.2 commonjs
+##### index.html
+<script src="bundle.js"></script>
+<script>
+    let ret = calculator.add(1,2);
+    console.log(ret);
+</script>
 
+##### commonjs
 编写的库将通过 CommonJS 规范导出。
 
-29.2.1 导出方式
-
+- 导出方式
 exports["calculator"] = (function (modules) {}({})
-29.2.2 使用方式
-
+- 使用方式
 require('npm-name')['calculator'].add(1,2);
-npm-name是指模块发布到 Npm 代码仓库时的名称
-29.3 commonjs2
 
+npm-name是指模块发布到 Npm 代码仓库时的名称
+
+##### commonjs2
 编写的库将通过 CommonJS 规范导出。
 
-29.3.1 导出方式
-
+- 导出方式
 module.exports = (function (modules) {}({})
-29.3.2 使用方式
 
+- 使用方式
 require('npm-name').add();
 在 output.libraryTarget 为 commonjs2 时，配置 output.library 将没有意义。
-29.4 this
 
+##### this
 编写的库将通过 this 被赋值给通过 library 指定的名称，输出和使用的代码如下：
 
-29.4.1 导出方式
-
+- 导出方式
 this["calculator"]= (function (modules) {}({})
-29.4.2 使用方式
 
+- 使用方式
 this.calculator.add();
-29.5 window
 
+##### window
 编写的库将通过 window 被赋值给通过 library 指定的名称，即把库挂载到 window 上，输出和使用的代码如下：
 
-29.5.1 导出方式
-
+- 导出方式
 window["calculator"]= (function (modules) {}({})
-29.5.2 使用方式
 
+- 使用方式
 window.calculator.add();
-29.6 global
 
+##### global
 编写的库将通过 global 被赋值给通过 library 指定的名称，即把库挂载到 global 上，输出和使用的代码如下：
 
-29.6.1 导出方式
-
+- 导出方式
 global["calculator"]= (function (modules) {}({})
-29.6.2 使用方式
 
+- 使用方式
 global.calculator.add();
-29.6 umd
 
+##### umd
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
@@ -1388,13 +1390,13 @@ global.calculator.add();
 });
 
 #### 打包库和组件
-webpack还可以用来打包JS库
-打包成压缩版和非压缩版
-支持AMD/CJS/ESM方式导入
-30.1 编写库文件
+- webpack还可以用来打包JS库
+- 打包成压缩版和非压缩版
+- 支持AMD/CJS/ESM方式导入
 
-30.1.1 webpack.config.js
+##### 编写库文件
 
+- webpack.config.js
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -1421,20 +1423,21 @@ module.exports = {
       libraryTarget:'umd'//配置以何种方式导出库,是字符串的枚举类型
   }
 };
-30.1.2 package.json
 
- "scripts": {
-+    "build": "webpack",
-30.1.3 index.js
+- package.json
+"scripts": {
+    "build": "webpack",
+}
 
+- index.js
 //zhufengnodejs zhufengjiagou
 if(process.env.NODE_ENV == 'production'){
     module.exports = require('./dist/zhufengmath.min.js');
 }else{
     module.exports = require('./dist/zhufengmath.js');
 }
-30.1.4 src\index.js
 
+- src\index.js
 export function add(a,b){
   return a+b;
 }
@@ -1450,56 +1453,59 @@ export function divide(a,b){
 export default {
   add,minus,multiply,divide
 }
-30.2 git规范和changelog
 
-30.2.1 良好的git commit好处
+##### git规范和changelog
 
-可以加快code review 的流程
-可以根据git commit 的元数据生成changelog
-可以让其它开发者知道修改的原因
-30.2.2 良好的commit
+###### 良好的git commit好处
+- 可以加快code review 的流程
+- 可以根据git commit 的元数据生成changelog
+- 可以让其它开发者知道修改的原因
 
-统一团队的git commit 标准
-可以使用angular的git commit日志作为基本规范
-提交的类型限制为 feat、fix、docs、style、refactor、perf、test、chore、revert等
-提交信息分为两部分，标题(首字母不大写，末尾不要加标点)、主体内容(描述修改内容)
-日志提交友好的类型选择提示 使用commitize工具
-不符合要求格式的日志拒绝提交 的保障机制
-需要使用validate-commit-msg工具
-需要同时在客户端、gitlab serverhook做
-统一changelog文档信息生成
-使用conventional-changelog-cli工具
-30.2.3 提交的格式
+###### 良好的commit
+- 统一团队的git commit 标准
+- 可以使用angular的git commit日志作为基本规范
+    - 提交的类型限制为 feat、fix、docs、style、refactor、perf、test、chore、revert等
+    - 提交信息分为两部分，标题(首字母不大写，末尾不要加标点)、主体内容(描述修改内容)
+- 日志提交友好的类型选择提示 使用commitize工具
+- 不符合要求格式的日志拒绝提交 的保障机制
+    - 需要使用validate-commit-msg工具
+    - 需要同时在客户端、gitlab serverhook做
+- 统一changelog文档信息生成
+    - 使用conventional-changelog-cli工具
 
+###### 提交的格式
 <type>(<scope>):<subject/>
 <BLANK LINE>
 <body>
 <BLANK LINE>
 <footer>
-代表某次提交的类型，比如是修复bug还是增加feature
-表示作用域，比如一个页面或一个组件
-主题 ，概述本次提交的内容
-详细的影响内容
-修复的bug和issue链接
-类型	含义
-feat	新增feature
-fix	修复bug
-docs	仅仅修改了文档，比如README、CHANGELOG、CONTRIBUTE等
-style	仅仅修改了空格、格式缩进、偏好等信息，不改变代码逻辑
-refactor	代码重构，没有新增功能或修复bug
-perf	优化相关，提升了性能和体验
-test	测试用例，包括单元测试和集成测试
-chore	改变构建流程，或者添加了依赖库和工具
-revert	回滚到上一个版本
-ci	CI 配置，脚本文件等更新
-30.2.4 precommit钩子
+
+- 代表某次提交的类型，比如是修复bug还是增加feature
+- 表示作用域，比如一个页面或一个组件
+- 主题 ，概述本次提交的内容
+- 详细的影响内容
+- 修复的bug和issue链接
+类型 | 含义
+feat | 新增feature
+fix | 修复bug
+docs | 仅仅修改了文档，比如README、CHANGELOG、CONTRIBUTE等
+style | 仅仅修改了空格、格式缩进、偏好等信息，不改变代码逻辑
+refactor | 代码重构，没有新增功能或修复bug
+perf | 优化相关，提升了性能和体验
+test | 测试用例，包括单元测试和集成测试
+chore | 改变构建流程，或者添加了依赖库和工具
+revert | 回滚到上一个版本
+ci | CI 配置，脚本文件等更新
+
+###### precommit钩子
 
 cnpm i husky validate-commit-msg conventional-changelog-cli --save-dev
 "scripts": {
     "commitmsg": "validate-commit-msg",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
 }
-30.2.4.1 conventional-changelog-cli
+
+- conventional-changelog-cli
 
 conventional-changelog-cli 默认推荐的 commit 标准是来自angular项目
 $ conventional-changelog -p angular -i CHANGELOG.md -s
@@ -1510,35 +1516,36 @@ $ conventional-changelog -p angular -i CHANGELOG.md -s
 
 conventional-changelog -p angular -i CHANGELOG.md -s -r 0
 其中 -r 表示生成 changelog 所需要使用的 release 版本数量，默认为1，全部则是0。
-30.3 semver版本规范
 
-可以避免循环依赖并减少依赖冲突
-开源项目的版本号通常由三位组件，比如x.y.z
-30.3.1 版本号说明
+##### semver版本规范
+- 可以避免循环依赖并减少依赖冲突
+- 开源项目的版本号通常由三位组件，比如x.y.z
 
-主版本号x： 重大升级，做了不兼容的API修改
-次版本号y： 做了向下的兼容的功能新增
-修订号z: 做了向下兼容和问题修复
-版本是严格递增的，比如1.1.1 -> 1.1.2 -> 1.2.1
-30.3.2 先行版本
+###### 版本号说明 
+- 主版本号x： 重大升级，做了不兼容的API修改
+- 次版本号y： 做了向下的兼容的功能新增
+- 修订号z: 做了向下兼容和问题修复
+- 版本是严格递增的，比如1.1.1 -> 1.1.2 -> 1.2.1
 
-在发布重要版本的时候，可以先发布alpha,rc等先行版本
-格式是在修订版本后面加上一个连接号(-),再加上一连串以(.)分割的标识符，标识符可以由英文、数字和连接号([0-9A-Za-z-])组成
-alpha: 是内部测试版，一般不向外发表，会有比较多的Bug,只给测试人员用
-bate: 也是测试版，这个阶段版本会增加新的功能，在Alpha之后推出
-rc(Release Candidate) 候选版本，这个阶段不会再加入新的功能，主要是用于解决错误
-15.0.0 -> 16.0.0-alpha.0 -> 16.0.0-alpha.1-> 16.0.0-bate.0 -> 16.0.0-bate.1-> 16.0.0-rc.1-> 16.0.0-rc.2
-30.3.3 升级版本
+###### 先行版本
+- 在发布重要版本的时候，可以先发布alpha,rc等先行版本
+- 格式是在修订版本后面加上一个连接号(-),再加上一连串以(.)分割的标识符，标识符可以由英文、数字和连接号([0-9A-Za-z-])组成
+    - alpha: 是内部测试版，一般不向外发表，会有比较多的Bug,只给测试人员用
+    - bate: 也是测试版，这个阶段版本会增加新的功能，在Alpha之后推出
+    - rc(Release Candidate) 候选版本，这个阶段不会再加入新的功能，主要是用于解决错误
+- 15.0.0 -> 16.0.0-alpha.0 -> 16.0.0-alpha.1-> 16.0.0-bate.0 -> 16.0.0-bate.1-> 16.0.0-rc.1-> 16.0.0-rc.2
 
+###### 升级版本
 npm version patch 升级补丁版本号
 npm version minor 升级小版本号
 npm version magor 升级大版本号
-30.3.4 发布
 
+###### 发布
 npm adduser
 npm login
 npm publish
-30.4 使用
+
+##### 使用
 
 UMD=ES Module + CJS + AMD CDN
 
@@ -1548,16 +1555,14 @@ console.log(window.zhufengmath);
 </script>
 
 #### px 自动转成rem
-使用px2rem-loader
-页面渲染时计算根元素的font-size值
-lib-flexible
-31.1 安装
+- 使用px2rem-loader
+- 页面渲染时计算根元素的font-size值
+- lib-flexible
 
+##### 安装
 cnpm i px2rem-loader lib-flexible -D
-31.2 index.html
 
-index.html
-
+##### index.html
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1576,8 +1581,8 @@ index.html
 <body>
     <div id="root"></div>
 </body>
-31.3 reset.css
 
+##### reset.css
 *{
     padding: 0;
     margin: 0;
@@ -1588,48 +1593,53 @@ index.html
     border:1px solid red;
     box-sizing: border-box;
 }
-31.4 webpack.config.js
 
- {
-        test:/\.css$/,//如果要require或import的文件是css的文件的话
-        //从右向左处理CSS文件,oader是一个函数
-        use:[{
-                loader:MiniCssExtractPlugin.loader,
-                options:{
-                     publicPath: (resourcePath, context) => {
-                        return '/';
-                    }
-                    //publicPath: '/'
+##### webpack.config.js
+{
+    test:/\.css$/,//如果要require或import的文件是css的文件的话
+    //从右向左处理CSS文件,oader是一个函数
+    use:[
+        {
+            loader:MiniCssExtractPlugin.loader,
+            options:{
+                    publicPath: (resourcePath, context) => {
+                    return '/';
                 }
-        },{
-                    loader:'css-loader',
-                    options:{
-                        //Enables/Disables or setups number of loaders applied before CSS loader.
-                        importLoaders:0
-                    }
-                },{
-                    loader:'postcss-loader',
-                    options:{
-                        plugins:[
-                            require('autoprefixer')
-                        ]
-                    }
-                },{
-+                    loader:'px2rem-loader',
-+                    options:{
-+                        remUnit:75,
-+                        remPrecesion:8
-+                    }
-+                }]
-+            },
+                //publicPath: '/'
+            }
+        },
+        {
+            loader:'css-loader',
+            options:{
+                //Enables/Disables or setups number of loaders applied before CSS loader.
+                importLoaders:0
+            }
+        },
+        {
+            loader:'postcss-loader',
+            options:{
+                plugins:[
+                    require('autoprefixer')
+                ]
+            }
+        },
+        {
+            loader:'px2rem-loader',
+            options:{
+                remUnit:75,
+                remPrecesion:8
+            }
+        }
+    ]
+},
 
 #### 内联资源
-可以在页面框架加载时进行初始化
-可以上报打点数据
-CSS的内联可以避免页面闪动
-可以减少HTTP网络请求的数量
-32.1 webpack.config.js
+- 可以在页面框架加载时进行初始化
+- 可以上报打点数据
+- CSS的内联可以避免页面闪动
+- 可以减少HTTP网络请求的数量
 
+##### webpack.config.js
 const path = require('path');
 const HtmlWebpackPlugin  = require("html-webpack-plugin");
 module.exports = {
@@ -1645,11 +1655,11 @@ module.exports = {
         }),
     ]
 };
-32.2 安装raw-loader
 
+##### 安装raw-loader
 cnpm install raw-loader --save-dev
-32.3 内联
 
+##### 内联
 <!--  内联html  -->
 ${require("raw-loader!./inline.html").default}
 <!--  内联js  -->
@@ -1662,60 +1672,60 @@ ${require("!!raw-loader!./inline.css").default}
 </style>
 
 #### 参考
-33.1 参考文档
 
-webpack-start
-resolve
-33.2 常用loader列表
+##### 参考文档
+- webpack-start
+- resolve
 
-webpack 可以使用 loader 来预处理文件。这允许你打包除 JavaScript 之外的任何静态资源。你可以使用 Node.js 来很简单地编写自己的 loader。
-awesome-loaders
-33.3 文件
+##### 常用loader列表
+- webpack 可以使用 loader 来预处理文件。这允许你打包除 JavaScript 之外的任何静态资源。你可以使用 Node.js 来很简单地编写自己的 loader。
+- awesome-loaders
 
-raw-loader 加载文件原始内容（utf-8）
-val-loader 将代码作为模块执行，并将 exports 转为 JS 代码
-url-loader 像 file loader 一样工作，但如果文件小于限制，可以返回 data URL
-file-loader 将文件发送到输出文件夹，并返回（相对）URL
-33.4 JSON
+##### 文件
+- raw-loader 加载文件原始内容（utf-8）
+- val-loader 将代码作为模块执行，并将 exports 转为 JS 代码
+- url-loader 像 file loader 一样工作，但如果文件小于限制，可以返回 data URL
+- file-loader 将文件发送到输出文件夹，并返回（相对）URL
 
-json-loader 加载 JSON 文件（默认包含）
-json5-loader 加载和转译 JSON 5 文件
-cson-loader 加载和转译 CSON 文件
-33.4 转换编译(Transpiling)
+##### JSON
+- json-loader 加载 JSON 文件（默认包含）
+- json5-loader 加载和转译 JSON 5 文件
+- cson-loader 加载和转译 CSON 文件
 
-script-loader 在全局上下文中执行一次 JavaScript 文件（如在 script 标签），不需要解析
-babel-loader 加载 ES2015+ 代码，然后使用 Babel 转译为 ES5
-buble-loader 使用 Bublé 加载 ES2015+ 代码，并且将代码转译为 ES5
-traceur-loader 加载 ES2015+ 代码，然后使用 Traceur 转译为 ES5
-ts-loader 或 awesome-typescript-loader 像 JavaScript 一样加载 TypeScript 2.0+
-coffee-loader 像 JavaScript 一样加载 CoffeeScript
-33.5 模板(Templating)
+##### 转换编译(Transpiling)
+- script-loader 在全局上下文中执行一次 JavaScript 文件（如在 script 标签），不需要解析
+- babel-loader 加载 ES2015+ 代码，然后使用 Babel 转译为 ES5
+- buble-loader 使用 Bublé 加载 ES2015+ 代码，并且将代码转译为 ES5
+- traceur-loader 加载 ES2015+ 代码，然后使用 Traceur 转译为 ES5
+- ts-loader 或 awesome-typescript-loader 像 JavaScript 一样加载 TypeScript 2.0+
+- coffee-loader 像 JavaScript 一样加载 CoffeeScript
 
-html-loader 导出 HTML 为字符串，需要引用静态资源
-pug-loader 加载 Pug 模板并返回一个函数
-jade-loader 加载 Jade 模板并返回一个函数
-markdown-loader 将 Markdown 转译为 HTML
-react-markdown-loader 使用 markdown-parse parser(解析器) 将 Markdown 编译为 React 组件
-posthtml-loader 使用 PostHTML 加载并转换 HTML 文件
-handlebars-loader 将 Handlebars 转移为 HTML
-markup-inline-loader 将内联的 SVG/MathML 文件转换为 HTML。在应用于图标字体，或将 CSS 动画应用于 SVG 时非常有用
-33.6 样式
+##### 模板(Templating)
+- html-loader 导出 HTML 为字符串，需要引用静态资源
+- pug-loader 加载 Pug 模板并返回一个函数
+- jade-loader 加载 Jade 模板并返回一个函数
+- markdown-loader 将 Markdown 转译为 HTML
+- react-markdown-loader 使用 markdown-parse parser(解析器) 将 Markdown 编译为 React 组件
+- posthtml-loader 使用 PostHTML 加载并转换 HTML 文件
+- handlebars-loader 将 Handlebars 转移为 HTML
+- markup-inline-loader 将内联的 SVG/MathML 文件转换为 HTML。在应用于图标字体，或将 CSS 动画应用于 SVG 时非常有用
 
-style-loader 将模块的导出作为样式添加到 DOM 中
-css-loader 解析 CSS 文件后，使用 import 加载，并且返回 CSS 代码
-less-loader 加载和转译 LESS 文件
-sass-loader 加载和转译 SASS/SCSS 文件
-postcss-loader 使用 PostCSS 加载和转译 CSS/SSS 文件
-stylus-loader 加载和转译 Stylus 文件
-33.7 清理和测试(Linting && Testing)
+##### 样式
+- style-loader 将模块的导出作为样式添加到 DOM 中
+- css-loader 解析 CSS 文件后，使用 import 加载，并且返回 CSS 代码
+- less-loader 加载和转译 LESS 文件
+- sass-loader 加载和转译 SASS/SCSS 文件
+- postcss-loader 使用 PostCSS 加载和转译 CSS/SSS 文件
+- stylus-loader 加载和转译 Stylus 文件
 
-mocha-loader 使用 mocha 测试（浏览器/NodeJS）
-eslint-loader PreLoader，使用 ESLint 清理代码
-jshint-loader PreLoader，使用 JSHint 清理代码
-jscs-loader PreLoader，使用 JSCS 检查代码样式
-coverjs-loader PreLoader，使用 CoverJS 确定测试覆盖率
-33.8 框架(Frameworks)
+##### 清理和测试(Linting && Testing)
+- mocha-loader 使用 mocha 测试（浏览器/NodeJS）
+- eslint-loader PreLoader，使用 ESLint 清理代码
+- jshint-loader PreLoader，使用 JSHint 清理代码
+- jscs-loader PreLoader，使用 JSCS 检查代码样式
+- coverjs-loader PreLoader，使用 CoverJS 确定测试覆盖率
 
-vue-loader 加载和转译 Vue 组件
-polymer-loader 使用选择预处理器(preprocessor)处理，并且 require() 类似一等模块(first-class)的 Web 组件
-angular2-template-loader 加载和转译 Angular 组件
+##### 框架(Frameworks)
+- vue-loader 加载和转译 Vue 组件
+- polymer-loader 使用选择预处理器(preprocessor)处理，并且 require() 类似一等模块(first-class)的 Web 组件
+- angular2-template-loader 加载和转译 Angular 组件
