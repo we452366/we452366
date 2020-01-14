@@ -9,29 +9,36 @@
         .container{
             display: flex;
             flex-direction: row;
-            width:100%;
+            
         }
         .row{
             flex:1;
             display:flex;
         }
-        .col{
+        .left{
+            flex:1;
+        }
+        .right{
+            /*flex:2;*/
             width:100%;
+            background-color:red;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="row">
-            <span class="col" style="background-color:red;">111</span>
+        <div class="row left">
+            111
         </div>
-        <div class="row">
-            <span class="col" style="background-color:yellow;">222</span>
-            <span class="col" style="background-color:green;">333</span>
+        <div class="row right">
+            
         </div>
     </div>
 <script>
-    
+    var c={};
+    var b={};
+    c.a=b={'a':1};
+    console.log(c.a);
 </script>
 </body>
 </html>
